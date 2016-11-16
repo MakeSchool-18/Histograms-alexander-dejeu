@@ -26,7 +26,6 @@ class Dictogram(dict):
                 self.types += 1
                 self.tokens += 1
 
-
     def count(self, item):
         """Return the count of the given item in this histogram, or 0"""
         if item in self:
@@ -48,36 +47,34 @@ class Listogram(list):
         """Update this histogram with the items in the given iterable"""
         # foo[1] = ('b','friend')
         for item in iterable:
-            for i in range(0, len(self)+1):
-                if i == len(self):
-                    self.append((item, 1))
-                    self.types += 1
-                    self.tokens += 1
-                    break
-                if self[i][0] == item:
-                    self[i] = (self[i][0], self[i][1] + 1)
-                    self.tokens += 1
-                    break
+            index = self._index(item)
+            if index is None:
+                self.append((item, 1))
+                self.types += 1
+                self.tokens += 1
+            else:
+                count = self[index][1]
+                self[index] = (item, count + 1)
+                self.tokens += 1
 
     def count(self, item):
         """Return the count of the given item in this histogram, or 0"""
-        for word in self:
-            if word[0] == item:
-                return word[1]
-        return 0
+        index = self._index(item)
+        if index is None:
+            return 0
+        return self[index][1]
 
     def __contains__(self, item):
         """Return True if the given item is in this histogram, or False"""
-        for word in self:
-            if word[0] == item:
-                return True
-        return False
+        if self._index(item) is None:
+            return False
+        return True
 
     def _index(self, target):
         """Return the index of the (target, count) entry if found, or None"""
-        for i in range(0, len(range)):
-            if self[i] == target:
-                return i
+        for index, (word, count) in enumerate(self):
+            if word == target:
+                return index
         return None
 
 
