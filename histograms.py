@@ -11,19 +11,27 @@ class Dictogram(dict):
         super(Dictogram, self).__init__()
         self.types = 0  # the number of distinct item types in this histogram
         self.tokens = 0  # the total count of all item tokens in this histogram
+
         if iterable:
             self.update(iterable)
 
     def update(self, iterable):
         """Update this histogram with the items in the given iterable"""
         for item in iterable:
-            # TODO: increment item count
-            pass
+            if item in self:
+                self[item] += 1
+                self.tokens += 1
+            else:
+                self[item] = 1
+                self.types += 1
+                self.tokens += 1
+
 
     def count(self, item):
         """Return the count of the given item in this histogram, or 0"""
-        # TODO: retrieve item count
-        pass
+        if item in self:
+            return self[item]
+        return 0
 
 
 class Listogram(list):
@@ -38,24 +46,39 @@ class Listogram(list):
 
     def update(self, iterable):
         """Update this histogram with the items in the given iterable"""
+        # foo[1] = ('b','friend')
         for item in iterable:
-            # TODO: increment item count
-            pass
+            for i in range(0, len(self)+1):
+                if i == len(self):
+                    self.append((item, 1))
+                    self.types += 1
+                    self.tokens += 1
+                    break
+                if self[i][0] == item:
+                    self[i] = (self[i][0], self[i][1] + 1)
+                    self.tokens += 1
+                    break
 
     def count(self, item):
         """Return the count of the given item in this histogram, or 0"""
-        # TODO: retrieve item count
-        pass
+        for word in self:
+            if word[0] == item:
+                return word[1]
+        return 0
 
     def __contains__(self, item):
         """Return True if the given item is in this histogram, or False"""
-        # TODO: check if item is in histogram
-        pass
+        for word in self:
+            if word[0] == item:
+                return True
+        return False
 
     def _index(self, target):
         """Return the index of the (target, count) entry if found, or None"""
-        # TODO: implement linear search to find an item's index
-        pass
+        for i in range(0, len(range)):
+            if self[i] == target:
+                return i
+        return None
 
 
 def test_histogram(text_list):
